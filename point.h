@@ -1,3 +1,7 @@
+#ifndef POINT_HPP
+#define POINT_HPP
+
+
 namespace Shape
 {
 
@@ -8,8 +12,10 @@ class Point
     int y;
 
   public:
-    inline Point();
+    Point();
     Point(int x, int y);
     Point operator=(const Point &other);
 };
 }
+
+#endif

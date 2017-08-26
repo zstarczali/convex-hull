@@ -1,16 +1,16 @@
 #include "point.h"
 
-Point::Point()
+Shape::Point::Point()
 {
 }
 
-Point::Point(int x, int y)
+Shape::Point::Point(int x, int y)
 {
     this->x = x;
     this->y = y;
 }
 
-Point Point::operator=(const Point &other)
+Shape::Point Shape::Point::operator=(const Shape::Point &other)
 {
     if (this != &other)
     {
