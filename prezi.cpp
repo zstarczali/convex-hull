@@ -49,12 +49,7 @@ int main()
     //cout << a << endl;
     cout << "begin - test (2)" << endl;
     Helper *pHelper = new Helper();
-    bool b = pHelper->circleLineIntersect(10, 10, 50, 50, 10, 20, 30);
 
-    if (b)
-    {
-        cout << "van keresztezes" << endl;
-    }
 
     cout << pHelper->hypot(-277.97627792017124, 916.8603585732999) << endl;
     cout << pHelper->dist(111.83345801920058, 620.3981598938773, 413.70270127392547, 271.14269499836905) << endl;
