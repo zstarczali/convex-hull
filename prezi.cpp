@@ -2,6 +2,7 @@
 #include <list>
 #include <array>
 #include <vector>
+#include <stdio.h>
 
 #include "./helper.h"
 
@@ -63,5 +64,6 @@ int main()
 
     cout << "end - test" << endl;
 
+    getchar();
     return 0;
 }
