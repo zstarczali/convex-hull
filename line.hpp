@@ -1,7 +1,7 @@
 #ifndef LINE_HPP
 #define LINE_HPP
 
-#include "point.h"
+#include "point.hpp"
 
 using Shape::Point;
 
