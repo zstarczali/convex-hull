@@ -20,3 +20,5 @@ class Line
     Line(double a, double b, double c);
 };
 }
+
+#endif

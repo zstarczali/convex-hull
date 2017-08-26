@@ -6,8 +6,8 @@
 #include <cstddef>
 #include <cstdlib>
 
-#include "point.h"
-#include "circle.h"
+#include "point.hpp"
+#include "circle.hpp"
 #include "linesegment.hpp"
 
 #ifndef M_PI
@@ -70,28 +70,6 @@ class Helper
             sum = preliminary;
         }
         return sqrt(sum) * max;
-    }
-
-    bool circleLineIntersect(float x1, float y1, float x2, float y2, float cx, float cy, float cr)
-    {
-        float dx = x2 - x1;
-        float dy = y2 - y1;
-        float a = dx * dx + dy * dy;
-        float b = 2 * (dx * (x1 - cx) + dy * (y1 - cy));
-        float c = cx * cx + cy * cy;
-        c += x1 * x1 + y1 * y1;
-        c -= 2 * (cx * x1 + cy * y1);
-        c -= cr * cr;
-        float bb4ac = b * b - 4 * a * c;
-
-        if (bb4ac < 0)
-        {
-            return false; // No collision
-        }
-        else
-        {
-            return true; //Collision
-        }
     }
 
     // Rotates a point about a fixed point
@@ -169,4 +147,3 @@ class Helper
     }
 };
 }
-

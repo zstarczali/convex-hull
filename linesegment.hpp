@@ -1,7 +1,7 @@
 #ifndef LINESEGMENT_HPP
 #define LINESEGMENT_HPP
 
-#include "point.h"
+#include "point.hpp"
 
 using Shape::Point;
 

@@ -6,8 +6,11 @@
             "command": "g++",
             "args": [
                 "-std=c++11", "-g", "prezi.cpp",
+                "helper.cpp",
                 "point.cpp",
                 "circle.cpp",
+                "line.cpp",
+                "linesegment.cpp",
                 "-o", "prezi"
             ],
             "group": {

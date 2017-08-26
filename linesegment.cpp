@@ -1,4 +1,8 @@
+#include "common.hpp"
+
 #include "linesegment.hpp"
+
+using namespace std;
 
 Shape::LineSegment::LineSegment(double x1, double y1, double x2, double y2)
 {

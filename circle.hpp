@@ -1,7 +1,7 @@
 #ifndef CIRCLE_HPP
 #define CIRCLE_HPP
 
-#include "point.h"
+#include "point.hpp"
 
 using Shape::Point;
 
