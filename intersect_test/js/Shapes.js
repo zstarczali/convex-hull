@@ -36,10 +36,10 @@ Shape.Circle = function (x, y, r) {
   this.r = r;
 };
 
-Shape.Circle.prototype.overlap = function (c) {
+/* Shape.Circle.prototype.overlap = function (c) {
   return this.p.dist(c.p) <= (this.r + c.r);
 };
-
+ */
 Shape.lineLineIntersection = function (l1, l2) {
 
   var p0 = new Shape.Point(l1.x1, l1.y1);

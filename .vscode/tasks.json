@@ -16,6 +16,19 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
+            },
+            "dependsOn": [
+                "build clean"
+            ]
+        },
+        {
+            "taskName": "build clean",
+            "command": "del *.exe",
+            
+            "type": "shell",
+            "presentation": {
+                "echo": false,
+                "reveal": "never"
             }
         }
     ]

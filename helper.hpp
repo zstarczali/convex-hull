@@ -1,7 +1,6 @@
 #ifndef HELPER_HPP
 #define HELPER_HPP
 
-
 #define _USE_MATH_DEFINES
 #define EPS 0.0000001
 #include <iostream>
@@ -9,6 +8,10 @@
 #include <cmath> // std::abs
 #include <cstddef>
 #include <cstdlib>
+#include <list>
+#include <memory>
+
+#include "common.hpp"
 
 #include "point.hpp"
 #include "circle.hpp"
@@ -27,17 +30,19 @@ namespace Shape
 class Helper
 {
 
-  private:
-  public:
-    Helper();
-    ~Helper();
-    static double dist(double x1, double y1, double z1, double x2);
-    // https://en.wikipedia.org/wiki/Hypot
-    static double hypot(double x, double y);
-    // Rotates a point about a fixed point
-    Point *rotatePoint(Point fp, Point pt, double a);
-    double acossafe(double x);
-    Point *lineLineIntersection(Shape::LineSegment l1, Shape::LineSegment l2);
+private:
+public:
+  Helper();
+  ~Helper();
+  static double dist(double x1, double y1, double z1, double x2);
+  // https://en.wikipedia.org/wiki/Hypot
+  static double hypot(double x, double y);
+  // Rotates a point about a fixed point
+  Point *rotatePoint(Point fp, Point pt, double a);
+  double acossafe(double x);
+
+  Point *lineLineIntersection(Shape::LineSegment l1, Shape::LineSegment l2);
+  list<Point> *circleCircleIntersectionPoints(Circle c1, Circle c2);
 };
 }
 

@@ -16,6 +16,10 @@ double Shape::Helper::dist(double x1, double y1, double z1, double x2)
 };
 
 // https://en.wikipedia.org/wiki/Hypot
+// Hypot is a mathematical function defined to calculate the length 
+// of the hypotenuse of a right-angle triangle. 
+// It was designed to avoid errors arising due to 
+// limited-precision calculations performed on computers.
 double Shape::Helper::hypot(double x, double y)
 {
     double max = 0;
@@ -70,12 +74,16 @@ double Shape::Helper::acossafe(double x)
 
 Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 {
-
+/*     
     Point *p0 = new Point(l1.x1, l1.y1);
     Point *p1 = new Point(l1.x2, l1.y2);
     Point *p2 = new Point(l2.x1, l2.y1);
-    Point *p3 = new Point(l2.x2, l2.y2);
-
+    Point *p3 = new Point(l2.x2, l2.y2); */
+    unique_ptr<Point> p0 (new Point(l1.x1, l1.y1));
+    unique_ptr<Point> p1 (new Point(l1.x1, l1.y1));
+    unique_ptr<Point> p2 (new Point(l1.x1, l1.y1));
+    unique_ptr<Point> p3 (new Point(l1.x1, l1.y1));
+    
     Point s1, s2;
     s1.x = p1->x - p0->x;
     s1.y = p1->y - p0->y;
@@ -91,6 +99,10 @@ Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 
     if (denom == 0)
     {
+/*         SafeDelete(p0);
+        SafeDelete(p1);
+        SafeDelete(p2);
+        SafeDelete(p3); */
         return NULL;
     }
 
@@ -103,6 +115,10 @@ Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 
     if ((s_numer < 0) == denom_positive)
     {
+/*         SafeDelete(p0);
+        SafeDelete(p1);
+        SafeDelete(p2);
+        SafeDelete(p3); */
         return NULL;
     }
 
@@ -110,11 +126,19 @@ Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 
     if ((t_numer < 0) == denom_positive)
     {
+/*         SafeDelete(p0);
+        SafeDelete(p1);
+        SafeDelete(p2);
+        SafeDelete(p3); */
         return NULL;
     }
 
     if ((s_numer > denom) == denom_positive || (t_numer > denom) == denom_positive)
     {
+/*         SafeDelete(p0);
+        SafeDelete(p1);
+        SafeDelete(p2);
+        SafeDelete(p3); */
         return NULL;
     }
 
@@ -122,3 +146,61 @@ Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 
     return new Point(p0->x + (t * s10_x), p0->y + (t * s10_y));
 }
+
+list<Point> *Shape::Helper::circleCircleIntersectionPoints(Circle c1, Circle c2)
+{
+    double r, R, d, cx, cy, Cx, Cy;
+    if (c1.r < c2.r)
+    {
+        r = c1.r;
+        R = c2.r;
+        cx = c1.x;
+        cy = c1.y;
+        Cx = c2.x;
+        Cy = c2.y;
+    }
+    else
+    {
+        r = c2.r;
+        R = c1.r;
+        Cx = c1.x;
+        Cy = c1.y;
+        cx = c2.x;
+        cy = c2.y;
+    }
+
+    // Find the distance between two points.
+    d = dist(cx, cy, Cx, Cy);
+
+    // There are an infinite number of solutions
+    // Seems appropriate to also return null
+    if (d < EPS && abs(R - r) < EPS)
+        return NULL;
+
+    // No intersection (circles centered at the
+    // same place with different size)
+    else if (d < EPS)
+        return NULL;
+
+    double vx = cx - Cx,
+           vy = cy - Cy;
+    double x = (vx / d) * R + Cx,
+           y = (vy / d) * R + Cy;
+    Point *P = new Point(x, y);
+
+    // Single intersection (kissing circles)
+    if (abs((R + r) - d) < EPS || abs(R - (r + d)) < EPS)
+        return NULL; //[P];
+
+    // No intersection. Either the small circle contained within
+    // big circle or circles are simply disjoint.
+    if ((d + r) < R || (R + r < d))
+        return NULL;
+
+    Point *C = new Point(Cx, Cy);
+    double angle = acossafe((r * r - d * d - R * R) / (-2.0 * d * R));
+    Point *pt1 = rotatePoint(*C, *P, +angle);
+    Point *pt2 = rotatePoint(*C, *P, -angle);
+    //return [ pt1, pt2 ];
+    return NULL; //TEMP!!!!!!!!!!!!!
+};
