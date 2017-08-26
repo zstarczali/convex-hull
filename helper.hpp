@@ -8,6 +8,7 @@
 
 #include "point.h"
 #include "circle.h"
+#include "linesegment.hpp"
 
 #ifndef M_PI
 #define M_PI (3.14159265358979323846)
@@ -17,69 +18,6 @@ using namespace std;
 
 namespace Shape
 {
-
-class Line
-{
-  public:
-    double a;
-    double b;
-    double c;
-    // General formula for line:
-    // ax + by = c, a != 0
-    // y = (c - ax)/b
-    Line(double a, double b, double c)
-    {
-        this->a = a;
-        this->b = b;
-        this->c = c;
-        // Normalize
-        if (abs(b) < EPS)
-        {
-            c /= a;
-            a = 1;
-            b = 0;
-        }
-        else
-        {
-            a = (abs(a) < EPS) ? 0 : a / b;
-            c /= b;
-            b = 1;
-        }
-    }
-};
-
-class LineSegment
-{
-  public:
-    double x1;
-    double y1;
-    double x2;
-    double y2;
-    Point *p1;
-    Point *p2;
-
-    LineSegment(double x1, double y1, double x2, double y2)
-    {
-        double d = 0;//Shape::Helper::dist(x1, y1, x2, y2);
-        if (d < EPS)
-            cout << "A point is not a line segment" << endl;
-        this->x1 = x1;
-        this->y1 = y1;
-        this->x2 = x2;
-        this->y2 = y2;
-        this->p1 = new Point(x1, y1);
-        this->p2 = new Point(x2, y2);
-    }
-};
-
-class LineSegment2 : LineSegment
-{
-  public:
-    LineSegment2(double x1, double y1, double x2, double y2)
-        : LineSegment(x1, y1, x2, y2)
-    {
-    }
-};
 
 class Helper
 {

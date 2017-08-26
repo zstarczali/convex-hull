@@ -4,7 +4,7 @@
 #include <vector>
 #include <stdio.h>
 
-#include "./helper.h"
+#include "./helper.hpp"
 
 using namespace std;
 using namespace Shape;

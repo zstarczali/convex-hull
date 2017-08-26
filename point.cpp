@@ -1,4 +1,4 @@
-#include "point.h"
+#include "point.hpp"
 
 Shape::Point::Point()
 {
