@@ -3,61 +3,83 @@
 #include <iostream>
 #include <math.h>
 #include <cmath> // std::abs
+#include <cstddef>
+#include <cstdlib>
+
+#include "point.h"
+#include "circle.h"
 
 #ifndef M_PI
 #define M_PI (3.14159265358979323846)
 #endif
 
 using namespace std;
-class LineSegment;
-
-class Helper;
 
 namespace Shape
 {
-class Point
+
+class Line
 {
   public:
-    int x;
-    int y;
-
-  public:
-    Point()
+    double a;
+    double b;
+    double c;
+    // General formula for line:
+    // ax + by = c, a != 0
+    // y = (c - ax)/b
+    Line(double a, double b, double c)
     {
-    }
-    Point(int x, int y)
-    {
-        this->x = x;
-        this->y = y;
-    }
-    Point operator=(const Point &other)
-    {
-        if (this != &other)
+        this->a = a;
+        this->b = b;
+        this->c = c;
+        // Normalize
+        if (abs(b) < EPS)
         {
-            this->x = other.x;
-            this->y = other.y;
+            c /= a;
+            a = 1;
+            b = 0;
+        }
+        else
+        {
+            a = (abs(a) < EPS) ? 0 : a / b;
+            c /= b;
+            b = 1;
         }
     }
 };
-class Circle
+
+class LineSegment
 {
   public:
-    double x;
-    double y;
-    Shape::Point *p;
-    double r;
-    Circle(double x, double y, double r)
+    double x1;
+    double y1;
+    double x2;
+    double y2;
+    Point *p1;
+    Point *p2;
+
+    LineSegment(double x1, double y1, double x2, double y2)
     {
-        this->x = x;
-        this->y = y;
-        this->p = new Shape::Point(x, y);
-        this->r = r;
+        double d = 0;//Shape::Helper::dist(x1, y1, x2, y2);
+        if (d < EPS)
+            cout << "A point is not a line segment" << endl;
+        this->x1 = x1;
+        this->y1 = y1;
+        this->x2 = x2;
+        this->y2 = y2;
+        this->p1 = new Point(x1, y1);
+        this->p2 = new Point(x2, y2);
     }
-    ~Circle()
+};
+
+class LineSegment2 : LineSegment
+{
+  public:
+    LineSegment2(double x1, double y1, double x2, double y2)
+        : LineSegment(x1, y1, x2, y2)
     {
     }
 };
-}
 
 class Helper
 {
@@ -135,13 +157,13 @@ class Helper
     }
 
     // Rotates a point about a fixed point
-    Shape::Point *rotatePoint(Shape::Point fp, Shape::Point pt, double a)
+    Point *rotatePoint(Point fp, Point pt, double a)
     {
         auto x = pt.x - fp.x;
         auto y = pt.y - fp.y;
         auto xRot = x * cos(a) + y * sin(a);
         auto yRot = y * cos(a) - x * sin(a);
-        return new Shape::Point(fp.x + xRot, fp.y + yRot);
+        return new Point(fp.x + xRot, fp.y + yRot);
     };
 
     double acossafe(double x)
@@ -153,120 +175,60 @@ class Helper
         return acos(x);
     }
 
-    /*     Shape.lineLineIntersection = function (l1, l2) {
-        
-          var p0 = new Shape.Point(l1.x1, l1.y1);
-          var p1 = new Shape.Point(l1.x2, l1.y2);
-          var p2 = new Shape.Point(l2.x1, l2.y1);
-          var p3 = new Shape.Point(l2.x2, l2.y2);
-        
-          var s1, s2;
-          s1 = {
-            x: p1.x - p0.x,
-            y: p1.y - p0.y
-          };
-          s2 = {
-            x: p3.x - p2.x,
-            y: p3.y - p2.y
-          };
-        
-          var s10_x = p1.x - p0.x;
-          var s10_y = p1.y - p0.y;
-          var s32_x = p3.x - p2.x;
-          var s32_y = p3.y - p2.y;
-        
-          var denom = s10_x * s32_y - s32_x * s10_y;
-        
-          if (denom == 0) {
-            return false;
-          }
-        
-          var denom_positive = denom > 0;
-        
-          var s02_x = p0.x - p2.x;
-          var s02_y = p0.y - p2.y;
-        
-          var s_numer = s10_x * s02_y - s10_y * s02_x;
-        
-          if ((s_numer < 0) == denom_positive) {
-            return false;
-          }
-        
-          var t_numer = s32_x * s02_y - s32_y * s02_x;
-        
-          if ((t_numer < 0) == denom_positive) {
-            return false;
-          }
-        
-          if ((s_numer > denom) == denom_positive || (t_numer > denom) == denom_positive) {
-            return false;
-          }
-        
-          var t = t_numer / denom;
-        
-          return new Shape.Point(p0.x + (t * s10_x), p0.y + (t * s10_y));
-        }*/
-};
-
-class LineSegment
-{
-  public:
-    double x1;
-    double y1;
-    double x2;
-    double y2;
-    Shape::Point *p1;
-    Shape::Point *p2;
-
-    LineSegment(double x1, double y1, double x2, double y2)
+    Point *lineLineIntersection(Shape::LineSegment l1, Shape::LineSegment l2)
     {
-        double d = Helper::dist(x1, y1, x2, y2);
-        if (d < EPS)
-            cout << "A point is not a line segment" << endl;
-        this->x1 = x1;
-        this->y1 = y1;
-        this->x2 = x2;
-        this->y2 = y2;
-        this->p1 = new Shape::Point(x1, y1);
-        this->p2 = new Shape::Point(x2, y2);
-    }
-};
 
-class LineSegment2 : LineSegment
-{
-  public:
-    LineSegment2(double x1, double y1, double x2, double y2)
-        : LineSegment(x1, y1, x2, y2)
-    {
-    }
-};
+        Point *p0 = new Point(l1.x1, l1.y1);
+        Point *p1 = new Point(l1.x2, l1.y2);
+        Point *p2 = new Point(l2.x1, l2.y1);
+        Point *p3 = new Point(l2.x2, l2.y2);
 
-class Line
-{
-  public:
-    double a;
-    double b;
-    double c;
-    // General formula for line:
-    // ax + by = c, a != 0
-    // y = (c - ax)/b
-    Line(double a, double b, double c)
-    {
-        this->a = a;
-        this->b = b;
-        this->c = c;
-        // Normalize
-        if (abs(b) < EPS)
+        Point s1, s2;
+        s1.x = p1->x - p0->x;
+        s1.y = p1->y - p0->y;
+        s2.x = p3->x - p2->x;
+        s2.y = p3->y - p2->y;
+
+        double s10_x = p1->x - p0->x;
+        double s10_y = p1->y - p0->y;
+        double s32_x = p3->x - p2->x;
+        double s32_y = p3->y - p2->y;
+
+        double denom = s10_x * s32_y - s32_x * s10_y;
+
+        if (denom == 0)
         {
-            c /= a;
-            a = 1;
-            b = 0;
+            return NULL;
         }
-        else
+
+        bool denom_positive = denom > 0;
+
+        double s02_x = p0->x - p2->x;
+        double s02_y = p0->y - p2->y;
+
+        double s_numer = s10_x * s02_y - s10_y * s02_x;
+
+        if ((s_numer < 0) == denom_positive)
         {
-            a = (abs(a) < EPS) ? 0 : a / b;
-            c /= b;
-            b = 1;
+            return NULL;
         }
+
+        double t_numer = s32_x * s02_y - s32_y * s02_x;
+
+        if ((t_numer < 0) == denom_positive)
+        {
+            return NULL;
+        }
+
+        if ((s_numer > denom) == denom_positive || (t_numer > denom) == denom_positive)
+        {
+            return NULL;
+        }
+
+        double t = t_numer / denom;
+
+        return new Point(p0->x + (t * s10_x), p0->y + (t * s10_y));
     }
 };
+}
+}
