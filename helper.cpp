@@ -16,9 +16,9 @@ double Shape::Helper::dist(double x1, double y1, double z1, double x2)
 };
 
 // https://en.wikipedia.org/wiki/Hypot
-// Hypot is a mathematical function defined to calculate the length 
-// of the hypotenuse of a right-angle triangle. 
-// It was designed to avoid errors arising due to 
+// Hypot is a mathematical function defined to calculate the length
+// of the hypotenuse of a right-angle triangle.
+// It was designed to avoid errors arising due to
 // limited-precision calculations performed on computers.
 double Shape::Helper::hypot(double x, double y)
 {
@@ -74,16 +74,16 @@ double Shape::Helper::acossafe(double x)
 
 Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 {
-/*     
+    /*     
     Point *p0 = new Point(l1.x1, l1.y1);
     Point *p1 = new Point(l1.x2, l1.y2);
     Point *p2 = new Point(l2.x1, l2.y1);
     Point *p3 = new Point(l2.x2, l2.y2); */
-    unique_ptr<Point> p0 (new Point(l1.x1, l1.y1));
-    unique_ptr<Point> p1 (new Point(l1.x1, l1.y1));
-    unique_ptr<Point> p2 (new Point(l1.x1, l1.y1));
-    unique_ptr<Point> p3 (new Point(l1.x1, l1.y1));
-    
+    unique_ptr<Point> p0(new Point(l1.x1, l1.y1));
+    unique_ptr<Point> p1(new Point(l1.x1, l1.y1));
+    unique_ptr<Point> p2(new Point(l1.x1, l1.y1));
+    unique_ptr<Point> p3(new Point(l1.x1, l1.y1));
+
     Point s1, s2;
     s1.x = p1->x - p0->x;
     s1.y = p1->y - p0->y;
@@ -99,7 +99,7 @@ Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 
     if (denom == 0)
     {
-/*         SafeDelete(p0);
+        /*         SafeDelete(p0);
         SafeDelete(p1);
         SafeDelete(p2);
         SafeDelete(p3); */
@@ -115,7 +115,7 @@ Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 
     if ((s_numer < 0) == denom_positive)
     {
-/*         SafeDelete(p0);
+        /*         SafeDelete(p0);
         SafeDelete(p1);
         SafeDelete(p2);
         SafeDelete(p3); */
@@ -126,7 +126,7 @@ Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 
     if ((t_numer < 0) == denom_positive)
     {
-/*         SafeDelete(p0);
+        /*         SafeDelete(p0);
         SafeDelete(p1);
         SafeDelete(p2);
         SafeDelete(p3); */
@@ -135,7 +135,7 @@ Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 
     if ((s_numer > denom) == denom_positive || (t_numer > denom) == denom_positive)
     {
-/*         SafeDelete(p0);
+        /*         SafeDelete(p0);
         SafeDelete(p1);
         SafeDelete(p2);
         SafeDelete(p3); */
@@ -203,4 +203,142 @@ list<Point> *Shape::Helper::circleCircleIntersectionPoints(Circle c1, Circle c2)
     Point *pt2 = rotatePoint(*C, *P, -angle);
     //return [ pt1, pt2 ];
     return NULL; //TEMP!!!!!!!!!!!!!
+};
+
+list<Point> *Shape::Helper::circleLineIntersection(Circle circle, Line line)
+{
+    double a = line.a,
+           b = line.b,
+           c = line.c;
+    double x = circle.x,
+           y = circle.y,
+           r = circle.r;
+
+    // Solve for the variable x with the formulas: ax + by = c (equation of line)
+    // and (x-X)^2 + (y-Y)^2 = r^2 (equation of circle where X,Y are known) and expand to obtain quadratic:
+    // (a^2 + b^2)x^2 + (2abY - 2ac + - 2b^2X)x + (b^2X^2 + b^2Y^2 - 2bcY + c^2 - b^2r^2) = 0
+    // Then use quadratic formula X = (-b +- sqrt(a^2 - 4ac))/2a to find the
+    // roots of the equation (if they exist) and this will tell us the intersection points
+
+    // In general a quadratic is written as: Ax^2 + Bx + C = 0
+    // (a^2 + b^2)x^2 + (2abY - 2ac + - 2b^2X)x + (b^2X^2 + b^2Y^2 - 2bcY + c^2 - b^2r^2) = 0
+    double A = a * a + b * b;
+    double B = 2 * a * b * y - 2 * a * c - 2 * b * b * x;
+    double C = b * b * x * x + b * b * y * y - 2 * b * c * y + c * c - b * b * r * r;
+
+    // Use quadratic formula x = (-b +- sqrt(a^2 - 4ac))/2a to find the
+    // roots of the equation (if they exist).
+
+    double D = B * B - 4 * A * C;
+    double x1, y1, x2, y2;
+
+    // Handle vertical line case with b = 0
+    if (abs(b) < EPS)
+    {
+        // Line equation is ax + by = c, but b = 0, so x = c/a
+        x1 = c / a;
+
+        // No intersection
+        if (abs(x - x1) > r)
+            return NULL;
+
+        // Vertical line is tangent to circle
+        if (abs((x1 - r) - x) < EPS || abs((x1 + r) - x) < EPS)
+            return NULL; //[new Shape.Point(x1, y)];
+
+        double dx = abs(x1 - x);
+        double dy = sqrt(r * r - dx * dx);
+
+        // Vertical line cuts through circle
+        return NULL; /*[
+          new Shape.Point(x1, y + dy),
+          new Shape.Point(x1, y - dy)
+        ];*/
+
+        // Line is tangent to circle
+    }
+    else if (abs(D) < EPS)
+    {
+
+        x1 = -B / (2 * A);
+        y1 = (c - a * x1) / b;
+
+        return NULL; //[new Shape.Point(x1, y1)];
+
+        // No intersection
+    }
+    else if (D < 0)
+    {
+        return NULL;
+    }
+    else
+    {
+        D = sqrt(D);
+
+        x1 = (-B + D) / (2 * A);
+        y1 = (c - a * x1) / b;
+
+        x2 = (-B - D) / (2 * A);
+        y2 = (c - a * x2) / b;
+
+        return NULL; /*[
+          new Shape.Point(x1, y1),
+          new Shape.Point(x2, y2)
+        ];*/
+    }
+};
+
+Line *Shape::Helper::segmentToGeneralForm(double x1, double y1, double x2, double y2)
+{
+    double a = y1 - y2;
+    double b = x2 - x1;
+    double c = x2 * y1 - x1 * y2;
+    return new Line(a, b, c);
+};
+
+// (x1,y1) is a top left corner, (x2,y2) is a bottom right corner
+bool Shape::Helper::pointInRectangle(Point pt, double x1, double y1, double x2, double y2)
+{
+    double x = min(x1, x2),
+           X = max(x1, x2);
+    double y = min(y1, y2),
+           Y = max(y1, y2);
+    return x - EPS <= pt.x && pt.x <= X + EPS &&
+           y - EPS <= pt.y && pt.y <= Y + EPS;
+};
+
+list<Point> *Shape::Helper::lineSegmentCircleIntersection(LineSegment segment, Circle circle)
+{
+    double x1 = segment.x1,
+           y1 = segment.y1,
+           x2 = segment.x2,
+           y2 = segment.y2;
+    Line *line = segmentToGeneralForm(x1, y1, x2, y2);
+
+    list<Point> pts;// = circleLineIntersection(circle, *line);
+
+    // No intersection
+    if (pts->size() == 0)
+        return NULL;
+
+    Point pt1 = pts[0];
+    bool includePt1 = pointInRectangle(pt1, x1, y1, x2, y2);
+
+    if (pts->size() == 1)
+    {
+        if (includePt1)
+            return NULL;//[pt1];
+        return NULL;
+    }
+
+    Point pt2 = pts[1];
+    bool includePt2 = pointInRectangle(pt2, x1, y1, x2, y2);
+
+    if (includePt1 && includePt2)
+        return NULL; //[ pt1, pt2 ];
+    if (includePt1)
+        return NULL; //[pt1];
+    if (includePt2)
+        return NULL; //[pt2];
+    return NULL;
 };

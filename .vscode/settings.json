@@ -5,6 +5,11 @@
         "cmath": "cpp",
         "ios": "cpp",
         "xiosbase": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "algorithm": "cpp",
+        "limits": "cpp",
+        "iosfwd": "cpp",
+        "xlocale": "cpp",
+        "xstring": "cpp"
     }
 }

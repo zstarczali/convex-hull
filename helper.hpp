@@ -14,6 +14,7 @@
 #include "common.hpp"
 
 #include "point.hpp"
+#include "line.hpp"
 #include "circle.hpp"
 #include "linesegment.hpp"
 
@@ -23,6 +24,8 @@
 
 using namespace std;
 using Shape::Point;
+using Shape::Line;
+using Shape::Circle;
 
 namespace Shape
 {
@@ -35,14 +38,21 @@ public:
   Helper();
   ~Helper();
   static double dist(double x1, double y1, double z1, double x2);
+
   // https://en.wikipedia.org/wiki/Hypot
   static double hypot(double x, double y);
+
   // Rotates a point about a fixed point
   Point *rotatePoint(Point fp, Point pt, double a);
   double acossafe(double x);
 
+  Line *segmentToGeneralForm(double x1, double y1, double x2, double y2);
+  bool pointInRectangle(Point pt, double x1, double y1, double x2, double y2);
+
   Point *lineLineIntersection(Shape::LineSegment l1, Shape::LineSegment l2);
   list<Point> *circleCircleIntersectionPoints(Circle c1, Circle c2);
+  list<Point> *circleLineIntersection(Circle circle, Line line);
+  list<Point> *lineSegmentCircleIntersection(LineSegment segment, Circle circle);
 };
 }
 

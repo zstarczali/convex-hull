@@ -15,6 +15,7 @@ public:
 
 public:
   Point();
+  ~Point();
   Point(int x, int y);
   Point operator=(const Point &other);
 };

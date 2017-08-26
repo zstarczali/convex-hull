@@ -4,6 +4,10 @@ Shape::Point::Point()
 {
 }
 
+Shape::Point::~Point()
+{
+}
+
 Shape::Point::Point(int x, int y)
 {
     this->x = x;
