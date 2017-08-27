@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/prezi.exe",
-            "args": [],
+            "args": ["test.dat"],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
             "environment": [],

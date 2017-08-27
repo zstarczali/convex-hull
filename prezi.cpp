@@ -4,83 +4,19 @@
 #include <vector>
 #include <stdio.h>
 #include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
 
 #include "./helper.hpp"
 
 using namespace std;
 using namespace Shape;
 
-void test()
-{
-    string a;
-    list<int> mylist; // empty list of ints
-    list<int>::iterator it;
-    it = mylist.end();
-
-    Shape::Point *pt = new Point(10, 20);
-
-    Shape::Point pt2;
-    pt2 = *pt;
-
-    delete pt;
-
-    list<Point> mytest;
-    Point point(10, 20);
-
-    mytest.push_back(point);
-
-    point.x = 100;
-    point.y = 200;
-    mytest.push_back(point);
-    mytest.clear();
-
-    cout << "xpos=" << pt2.x << endl;
-    cout << "ypos=" << pt2.y << endl;
-
-    vector<string> myvector;
-    auto it2 = myvector.end();
-    myvector.insert(myvector.end(), "test one");
-    myvector.insert(myvector.end(), "test two");
-    myvector.insert(myvector.end(), "test three");
-
-    mylist.insert(it, 1);
-    mylist.insert(it, 10);
-    mylist.insert(it, 100);
-
-    std::array<int, 3> arr;
-    arr.empty();
-
-    for (auto _it = myvector.begin(); _it != myvector.end(); ++_it)
-        cout << (string)*_it << endl;
-
-    for (auto _it = mylist.begin(); _it != mylist.end(); ++_it)
-        cout << *_it << endl;
-
-    //cin >> a;
-    //cout << a << endl;
-    cout << "begin - test (2)" << endl;
-    Helper *pHelper = new Helper();
-
-    cout << pHelper->hypot(-277.97627792017124, 916.8603585732999) << endl;
-    cout << pHelper->dist(111.83345801920058, 620.3981598938773, 413.70270127392547, 271.14269499836905) << endl;
-
-    delete pHelper;
-    pHelper = NULL;
-
-    cout << "end - test" << endl;
-}
-
 void displayPoint(Point pt)
 {
     cout << pt.x << "," << pt.y << endl;
-}
-
-void addUniqueElement(vector<Point> &results, Point item)
-{
-    /*     if (find(results.begin(), results.end(), item) != results.end())
-        cout << "van" << endl;
-    else
-        cout << "nincs" << endl; */
 }
 
 template <typename T>
@@ -92,22 +28,123 @@ const bool Contains(std::vector<T> &Vec, const T &Element)
     return false;
 }
 
-int main()
+void calculate()
 {
-    unique_ptr<Helper> helper;
+}
 
-    vector<Point> results;
+int main(int argc, char *argv[])
+{
+    // Check the number of parameters
+    if (argc < 2)
+    {
+        // Tell the user how to run the program
+        cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
+
+        return 1;
+    }
+
+    ifstream myfile(argv[1]);
+
     vector<LineSegment> lines;
     vector<Circle> circles;
 
+    string line;
+    int linecount = 0;
+    int objectcount = 0;
+    if (myfile.is_open())
+    {
+        while (getline(myfile, line))
+        {
+
+            // the first line is a counter
+            if (linecount == 0)
+            {
+                objectcount = std::stoi(line, nullptr, 0);
+                linecount++;
+            }
+            else
+            {
+                // parse avaiable commands
+                // L is a line
+                // C is a circle
+                if (line.find_first_of("L") != -1)
+                {
+                    int pos = line.find("L");
+
+                    string params = line.substr(pos + 1, line.length() - 1);
+                    istringstream is(params);
+                    string part;
+                    stack<double> mystack;
+                    while (getline(is, part, ' '))
+                    {
+                        if (!part.empty())
+                        {
+                            double d = stod(part, nullptr);
+                            mystack.push(d);
+                        }
+                    }
+                    {
+                        double y2 = mystack.top();
+                        mystack.pop();
+                        double x2 = mystack.top();
+                        mystack.pop();
+                        double y1 = mystack.top();
+                        mystack.pop();
+                        double x1 = mystack.top();
+                        mystack.pop();
+                        lines.push_back(LineSegment(x1, y1, x2, y2));
+                    }
+                }
+                if (line.find_first_of("C") != -1)
+                {
+                    int pos = line.find("C");
+
+                    string params = line.substr(pos + 1, line.length() - 1);
+                    istringstream is(params);
+                    string part;
+                    stack<double> mystack;
+                    while (getline(is, part, ' '))
+                    {
+                        if (!part.empty())
+                        {
+                            double d = stod(part, nullptr);
+                            mystack.push(d);
+                        }
+                    }
+                    {
+
+                        double r = mystack.top();
+                        mystack.pop();
+                        double y = mystack.top();
+                        mystack.pop();
+                        double x = mystack.top();
+                        mystack.pop();
+                        circles.push_back(Circle(x, y, r));
+                    }
+                }
+            }
+
+            if (objectcount == linecount)
+            {
+                break;
+            }
+        }
+        myfile.close();
+    }
+
+    unique_ptr<Helper> helper;
+
+    vector<Point> results;
+
+
     // ************************* BEGIN TEST DATA
-    lines.push_back(LineSegment(170, 80, 430, 620));
+/*     lines.push_back(LineSegment(170, 80, 430, 620));
     lines.push_back(LineSegment(170, 180, 430, 400));
     lines.push_back(LineSegment(170, 180, 430, 830));
 
     circles.push_back(Circle(400, 400, 300));
     circles.push_back(Circle(600, 500, 300));
-    circles.push_back(Circle(500, 550, 350));
+    circles.push_back(Circle(500, 550, 350)); */
     // ************************* END TEST DATA
 
     for (int i1 = 0; i1 < lines.size(); i1++)

@@ -41,6 +41,9 @@
         "xstddef": "cpp",
         "xtr1common": "cpp",
         "stack": "cpp",
-        "deque": "cpp"
+        "deque": "cpp",
+        "string": "cpp",
+        "fstream": "cpp",
+        "sstream": "cpp"
     }
 }

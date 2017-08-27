@@ -400,32 +400,13 @@ vector<Point> Helper::convex_hull(vector<Point> P)
 
 double Helper::polygonArea(vector<Point> points)
 {
-    double area = 0.0;              // Accumulates area in the loop
+    double area = 0.0;            // Accumulates area in the loop
     double j = points.size() - 1; // The last vertex is the 'previous' one to the first
 
     for (int i = 0; i < points.size(); i++)
     {
-        //area = area +  (X[j]+X[i]) * (Y[j]-Y[i]);
         area = area + (points[j].x + points[i].x) * (points[j].y - points[i].y);
         j = i; //j is previous vertex to i
     }
     return abs(area / 2.0);
 }
-/* 
-// (X[i], Y[i]) are coordinates of i'th point.
-double polygonArea(double X[], double Y[], int n)
-{
-    // Initialze area
-    double area = 0.0;
- 
-    // Calculate value of shoelace formula
-    int j = n - 1;
-    for (int i = 0; i < n; i++)
-    {
-        area += (X[j] + X[i]) * (Y[j] - Y[i]);
-        j = i;  // j is previous vertex to i
-    }
- 
-    // Return absolute value
-    return abs(area / 2.0);
-} */
