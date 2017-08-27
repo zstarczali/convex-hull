@@ -171,6 +171,7 @@ int main()
     {
         displayPoint(convexhull[k]);
     }
+    cout << "area=" << helper->polygonArea(convexhull) << endl;
 
     getchar();
     return 0;

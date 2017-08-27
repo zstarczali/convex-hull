@@ -64,6 +64,7 @@ public:
 
   coord2_t cross(const Point &O, const Point &A, const Point &B);
   vector<Point> convex_hull(vector<Point> P);
+  double polygonArea(vector<Point> points);
 };
 }
 

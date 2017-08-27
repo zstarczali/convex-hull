@@ -1,5 +1,5 @@
 #include "helper.hpp"
-#include <algorithm>    // std::sort
+#include <algorithm> // std::sort
 
 using Shape::Point;
 using Shape::Helper;
@@ -368,28 +368,64 @@ Shape::coord2_t Helper::cross(const Point &O, const Point &A, const Point &B)
 
 // Returns a list of points on the convex hull in counter-clockwise order.
 // Note: the last point in the returned list is the same as the first one.
-vector<Point>  Helper::convex_hull(vector<Point> P)
+vector<Point> Helper::convex_hull(vector<Point> P)
 {
-	int n = P.size(), k = 0;
-	if (n == 1) return P;
-	vector<Point> H(2*n);
+    int n = P.size(), k = 0;
+    if (n == 1)
+        return P;
+    vector<Point> H(2 * n);
 
-	// Sort points lexicographically
-	sort(P.begin(), P.end());
+    // Sort points lexicographically
+    sort(P.begin(), P.end());
 
-	// Build lower hull
-	for (int i = 0; i < n; ++i) {
-		while (k >= 2 && cross(H[k-2], H[k-1], P[i]) <= 0) k--;
-		H[k++] = P[i];
-	}
+    // Build lower hull
+    for (int i = 0; i < n; ++i)
+    {
+        while (k >= 2 && cross(H[k - 2], H[k - 1], P[i]) <= 0)
+            k--;
+        H[k++] = P[i];
+    }
 
-	// Build upper hull
-	for (int i = n-2, t = k+1; i >= 0; i--) {
-		while (k >= t && cross(H[k-2], H[k-1], P[i]) <= 0) k--;
-		H[k++] = P[i];
-	}
+    // Build upper hull
+    for (int i = n - 2, t = k + 1; i >= 0; i--)
+    {
+        while (k >= t && cross(H[k - 2], H[k - 1], P[i]) <= 0)
+            k--;
+        H[k++] = P[i];
+    }
 
-	H.resize(k-1);
-	return H;
+    H.resize(k - 1);
+    return H;
 }
 
+double Helper::polygonArea(vector<Point> points)
+{
+    double area = 0.0;              // Accumulates area in the loop
+    double j = points.size() - 1; // The last vertex is the 'previous' one to the first
+
+    for (int i = 0; i < points.size(); i++)
+    {
+        //area = area +  (X[j]+X[i]) * (Y[j]-Y[i]);
+        area = area + (points[j].x + points[i].x) * (points[j].y - points[i].y);
+        j = i; //j is previous vertex to i
+    }
+    return abs(area / 2.0);
+}
+/* 
+// (X[i], Y[i]) are coordinates of i'th point.
+double polygonArea(double X[], double Y[], int n)
+{
+    // Initialze area
+    double area = 0.0;
+ 
+    // Calculate value of shoelace formula
+    int j = n - 1;
+    for (int i = 0; i < n; i++)
+    {
+        area += (X[j] + X[i]) * (Y[j] - Y[i]);
+        j = i;  // j is previous vertex to i
+    }
+ 
+    // Return absolute value
+    return abs(area / 2.0);
+} */
