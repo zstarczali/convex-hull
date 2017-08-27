@@ -4,14 +4,19 @@
 #ifndef POINT_HPP
 #define POINT_HPP
 
+#include <stack>
+
+using namespace std;
+
 namespace Shape
 {
-
 class Point
 {
 public:
   double x;
   double y;
+  // Point having the least y coordinate, used for sorting other points
+  // according to polar angle about this point
 
 public:
   Point();
@@ -25,7 +30,7 @@ public:
 
   Point operator=(const Point &other);
   bool operator==(const Point &other) const;
-  
+
   bool operator<(Point b);
 };
 }

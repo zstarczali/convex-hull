@@ -165,6 +165,12 @@ int main()
     }
 
     results.shrink_to_fit();
+    cout << "convex hull" << endl;
+    vector<Point> convexhull = helper->convex_hull(results);
+    for (int k = 0; k < convexhull.size(); k++)
+    {
+        displayPoint(convexhull[k]);
+    }
 
     getchar();
     return 0;

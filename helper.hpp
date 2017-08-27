@@ -9,9 +9,11 @@
 #include <cstddef>
 #include <cstdlib>
 #include <list>
+#include <stack>
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <cstdio>
 
 #include "common.hpp"
 
@@ -32,6 +34,9 @@ using Shape::Circle;
 namespace Shape
 {
 
+typedef double coord_t;  // coordinate type
+typedef double coord2_t; // must be big enough to hold 2*max(|coordinate|)^2
+
 class Helper
 {
 
@@ -47,8 +52,6 @@ public:
 
   // Rotates a point about a fixed point
   Point rotatePoint(Point fp, Point pt, double a);
-  int ccw(Point a, Point b, Point c);
-
   double acossafe(double x);
 
   Line segmentToGeneralForm(double x1, double y1, double x2, double y2);
@@ -58,6 +61,9 @@ public:
   vector<Point> circleCircleIntersectionPoints(Circle c1, Circle c2);
   vector<Point> circleLineIntersection(Circle circle, Line line);
   vector<Point> lineSegmentCircleIntersection(LineSegment segment, Circle circle);
+
+  coord2_t cross(const Point &O, const Point &A, const Point &B);
+  vector<Point> convex_hull(vector<Point> P);
 };
 }
 

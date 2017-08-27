@@ -1,15 +1,17 @@
 #include "helper.hpp"
+#include <algorithm>    // std::sort
 
 using Shape::Point;
+using Shape::Helper;
 
-Shape::Helper::Helper()
+Helper::Helper()
 {
 }
-Shape::Helper::~Helper()
+Helper::~Helper()
 {
 }
 
-double Shape::Helper::dist(double x1, double y1, double z1, double x2)
+double Helper::dist(double x1, double y1, double z1, double x2)
 {
     // In the case of 2d: z1 means x2 and x2 means y2
     return hypot(z1 - x1, x2 - y1);
@@ -20,7 +22,7 @@ double Shape::Helper::dist(double x1, double y1, double z1, double x2)
 // of the hypotenuse of a right-angle triangle.
 // It was designed to avoid errors arising due to
 // limited-precision calculations performed on computers.
-double Shape::Helper::hypot(double x, double y)
+double Helper::hypot(double x, double y)
 {
     double max = 0;
     double point[2];
@@ -54,7 +56,7 @@ double Shape::Helper::hypot(double x, double y)
 }
 
 // Rotates a point about a fixed point
-Point Shape::Helper::rotatePoint(Point fp, Point pt, double a)
+Point Helper::rotatePoint(Point fp, Point pt, double a)
 {
     auto x = pt.x - fp.x;
     auto y = pt.y - fp.y;
@@ -63,19 +65,7 @@ Point Shape::Helper::rotatePoint(Point fp, Point pt, double a)
     return Point(fp.x + xRot, fp.y + yRot);
 }
 
-// returns -1 if a -> b -> c forms a counter-clockwise turn,
-// +1 for a clockwise turn, 0 if they are collinear
-int Shape::Helper::ccw(Point a, Point b, Point c)
-{
-    int area = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
-    if (area > 0)
-        return -1;
-    else if (area < 0)
-        return 1;
-    return 0;
-}
-
-double Shape::Helper::acossafe(double x)
+double Helper::acossafe(double x)
 {
     if (x >= +1.0)
         return 0;
@@ -84,7 +74,7 @@ double Shape::Helper::acossafe(double x)
     return acos(x);
 }
 
-Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
+Point *Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 {
     unique_ptr<Point> p0(new Point(l1.x1, l1.y1));
     unique_ptr<Point> p1(new Point(l1.x2, l1.y2));
@@ -138,7 +128,7 @@ Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
     return new Point(p0->x + (t * s10_x), p0->y + (t * s10_y));
 }
 
-vector<Point> Shape::Helper::circleCircleIntersectionPoints(Circle c1, Circle c2)
+vector<Point> Helper::circleCircleIntersectionPoints(Circle c1, Circle c2)
 {
     vector<Point> ret;
 
@@ -202,7 +192,7 @@ vector<Point> Shape::Helper::circleCircleIntersectionPoints(Circle c1, Circle c2
     return ret;
 };
 
-vector<Point> Shape::Helper::circleLineIntersection(Circle circle, Line line)
+vector<Point> Helper::circleLineIntersection(Circle circle, Line line)
 {
     vector<Point> ret; // empty list
 
@@ -298,7 +288,7 @@ vector<Point> Shape::Helper::circleLineIntersection(Circle circle, Line line)
     }
 };
 
-Line Shape::Helper::segmentToGeneralForm(double x1, double y1, double x2, double y2)
+Line Helper::segmentToGeneralForm(double x1, double y1, double x2, double y2)
 {
     double a = y1 - y2;
     double b = x2 - x1;
@@ -307,7 +297,7 @@ Line Shape::Helper::segmentToGeneralForm(double x1, double y1, double x2, double
 };
 
 // (x1,y1) is a top left corner, (x2,y2) is a bottom right corner
-bool Shape::Helper::pointInRectangle(Point pt, double x1, double y1, double x2, double y2)
+bool Helper::pointInRectangle(Point pt, double x1, double y1, double x2, double y2)
 {
     double x = min(x1, x2),
            X = max(x1, x2);
@@ -317,7 +307,7 @@ bool Shape::Helper::pointInRectangle(Point pt, double x1, double y1, double x2, 
            y - EPS <= pt.y && pt.y <= Y + EPS;
 };
 
-vector<Point> Shape::Helper::lineSegmentCircleIntersection(LineSegment segment, Circle circle)
+vector<Point> Helper::lineSegmentCircleIntersection(LineSegment segment, Circle circle)
 {
     vector<Point> ret; // empty list
 
@@ -367,3 +357,39 @@ vector<Point> Shape::Helper::lineSegmentCircleIntersection(LineSegment segment, 
     }
     return ret;
 };
+
+// 2D cross product of OA and OB vectors, i.e. z-component of their 3D cross product.
+// Returns a positive value, if OAB makes a counter-clockwise turn,
+// negative for clockwise turn, and zero if the points are collinear.
+Shape::coord2_t Helper::cross(const Point &O, const Point &A, const Point &B)
+{
+    return (A.x - O.x) * (B.y - O.y) - (A.y - O.y) * (B.x - O.x);
+}
+
+// Returns a list of points on the convex hull in counter-clockwise order.
+// Note: the last point in the returned list is the same as the first one.
+vector<Point>  Helper::convex_hull(vector<Point> P)
+{
+	int n = P.size(), k = 0;
+	if (n == 1) return P;
+	vector<Point> H(2*n);
+
+	// Sort points lexicographically
+	sort(P.begin(), P.end());
+
+	// Build lower hull
+	for (int i = 0; i < n; ++i) {
+		while (k >= 2 && cross(H[k-2], H[k-1], P[i]) <= 0) k--;
+		H[k++] = P[i];
+	}
+
+	// Build upper hull
+	for (int i = n-2, t = k+1; i >= 0; i--) {
+		while (k >= t && cross(H[k-2], H[k-1], P[i]) <= 0) k--;
+		H[k++] = P[i];
+	}
+
+	H.resize(k-1);
+	return H;
+}
+
