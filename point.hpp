@@ -10,14 +10,21 @@ namespace Shape
 class Point
 {
 public:
-  int x;
-  int y;
+  double x;
+  double y;
 
 public:
   Point();
   ~Point();
-  Point(int x, int y);
+  Point(double x, double y);
+
+  void set_x(double x);
+  void set_y(double y);
+  double get_x();
+  double get_y();
+
   Point operator=(const Point &other);
+  bool operator<(Point b);
 };
 }
 

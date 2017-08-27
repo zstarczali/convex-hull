@@ -54,13 +54,25 @@ double Shape::Helper::hypot(double x, double y)
 }
 
 // Rotates a point about a fixed point
-Point *Shape::Helper::rotatePoint(Point fp, Point pt, double a)
+Point Shape::Helper::rotatePoint(Point fp, Point pt, double a)
 {
     auto x = pt.x - fp.x;
     auto y = pt.y - fp.y;
     auto xRot = x * cos(a) + y * sin(a);
     auto yRot = y * cos(a) - x * sin(a);
-    return new Point(fp.x + xRot, fp.y + yRot);
+    return Point(fp.x + xRot, fp.y + yRot);
+}
+
+// returns -1 if a -> b -> c forms a counter-clockwise turn,
+// +1 for a clockwise turn, 0 if they are collinear
+int Shape::Helper::ccw(Point a, Point b, Point c)
+{
+    int area = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+    if (area > 0)
+        return -1;
+    else if (area < 0)
+        return 1;
+    return 0;
 }
 
 double Shape::Helper::acossafe(double x)
@@ -74,15 +86,10 @@ double Shape::Helper::acossafe(double x)
 
 Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 {
-    /*     
-    Point *p0 = new Point(l1.x1, l1.y1);
-    Point *p1 = new Point(l1.x2, l1.y2);
-    Point *p2 = new Point(l2.x1, l2.y1);
-    Point *p3 = new Point(l2.x2, l2.y2); */
     unique_ptr<Point> p0(new Point(l1.x1, l1.y1));
-    unique_ptr<Point> p1(new Point(l1.x1, l1.y1));
-    unique_ptr<Point> p2(new Point(l1.x1, l1.y1));
-    unique_ptr<Point> p3(new Point(l1.x1, l1.y1));
+    unique_ptr<Point> p1(new Point(l1.x2, l1.y2));
+    unique_ptr<Point> p2(new Point(l2.x1, l2.y1));
+    unique_ptr<Point> p3(new Point(l2.x2, l2.y2));
 
     Point s1, s2;
     s1.x = p1->x - p0->x;
@@ -99,10 +106,6 @@ Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 
     if (denom == 0)
     {
-        /*         SafeDelete(p0);
-        SafeDelete(p1);
-        SafeDelete(p2);
-        SafeDelete(p3); */
         return NULL;
     }
 
@@ -115,10 +118,6 @@ Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 
     if ((s_numer < 0) == denom_positive)
     {
-        /*         SafeDelete(p0);
-        SafeDelete(p1);
-        SafeDelete(p2);
-        SafeDelete(p3); */
         return NULL;
     }
 
@@ -126,19 +125,11 @@ Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
 
     if ((t_numer < 0) == denom_positive)
     {
-        /*         SafeDelete(p0);
-        SafeDelete(p1);
-        SafeDelete(p2);
-        SafeDelete(p3); */
         return NULL;
     }
 
     if ((s_numer > denom) == denom_positive || (t_numer > denom) == denom_positive)
     {
-        /*         SafeDelete(p0);
-        SafeDelete(p1);
-        SafeDelete(p2);
-        SafeDelete(p3); */
         return NULL;
     }
 
@@ -147,8 +138,10 @@ Point *Shape::Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
     return new Point(p0->x + (t * s10_x), p0->y + (t * s10_y));
 }
 
-list<Point> *Shape::Helper::circleCircleIntersectionPoints(Circle c1, Circle c2)
+vector<Point> Shape::Helper::circleCircleIntersectionPoints(Circle c1, Circle c2)
 {
+    vector<Point> ret;
+
     double r, R, d, cx, cy, Cx, Cy;
     if (c1.r < c2.r)
     {
@@ -175,38 +168,44 @@ list<Point> *Shape::Helper::circleCircleIntersectionPoints(Circle c1, Circle c2)
     // There are an infinite number of solutions
     // Seems appropriate to also return null
     if (d < EPS && abs(R - r) < EPS)
-        return NULL;
+        return ret;
 
     // No intersection (circles centered at the
     // same place with different size)
     else if (d < EPS)
-        return NULL;
+        return ret;
 
     double vx = cx - Cx,
            vy = cy - Cy;
     double x = (vx / d) * R + Cx,
            y = (vy / d) * R + Cy;
-    Point *P = new Point(x, y);
+    Point P(x, y);
 
     // Single intersection (kissing circles)
     if (abs((R + r) - d) < EPS || abs(R - (r + d)) < EPS)
-        return NULL; //[P];
-
+    {
+        ret.push_back(P);
+        return ret;
+    }
     // No intersection. Either the small circle contained within
     // big circle or circles are simply disjoint.
     if ((d + r) < R || (R + r < d))
-        return NULL;
+        return ret;
 
-    Point *C = new Point(Cx, Cy);
+    Point C(Cx, Cy);
     double angle = acossafe((r * r - d * d - R * R) / (-2.0 * d * R));
-    Point *pt1 = rotatePoint(*C, *P, +angle);
-    Point *pt2 = rotatePoint(*C, *P, -angle);
-    //return [ pt1, pt2 ];
-    return NULL; //TEMP!!!!!!!!!!!!!
+    Point pt1 = rotatePoint(C, P, +angle);
+    Point pt2 = rotatePoint(C, P, -angle);
+    ret.push_back(pt1);
+    ret.push_back(pt2);
+
+    return ret;
 };
 
-list<Point> *Shape::Helper::circleLineIntersection(Circle circle, Line line)
+vector<Point> Shape::Helper::circleLineIntersection(Circle circle, Line line)
 {
+    vector<Point> ret; // empty list
+
     double a = line.a,
            b = line.b,
            c = line.c;
@@ -240,20 +239,26 @@ list<Point> *Shape::Helper::circleLineIntersection(Circle circle, Line line)
 
         // No intersection
         if (abs(x - x1) > r)
-            return NULL;
+            return ret;
 
         // Vertical line is tangent to circle
         if (abs((x1 - r) - x) < EPS || abs((x1 + r) - x) < EPS)
-            return NULL; //[new Shape.Point(x1, y)];
+        {
+            Point pt(x1, y);
+            ret.push_back(pt);
+            return ret;
+        }
 
         double dx = abs(x1 - x);
         double dy = sqrt(r * r - dx * dx);
 
         // Vertical line cuts through circle
-        return NULL; /*[
-          new Shape.Point(x1, y + dy),
-          new Shape.Point(x1, y - dy)
-        ];*/
+        Point pt(x1, y + dy);
+        ret.push_back(pt);
+        pt.set_x(x1);
+        pt.set_y(y - dy);
+        ret.push_back(pt);
+        return ret;
 
         // Line is tangent to circle
     }
@@ -263,13 +268,16 @@ list<Point> *Shape::Helper::circleLineIntersection(Circle circle, Line line)
         x1 = -B / (2 * A);
         y1 = (c - a * x1) / b;
 
-        return NULL; //[new Shape.Point(x1, y1)];
+        Point pt(x1, y1);
+
+        ret.push_back(pt);
+        return ret;
 
         // No intersection
     }
     else if (D < 0)
     {
-        return NULL;
+        return ret;
     }
     else
     {
@@ -281,19 +289,21 @@ list<Point> *Shape::Helper::circleLineIntersection(Circle circle, Line line)
         x2 = (-B - D) / (2 * A);
         y2 = (c - a * x2) / b;
 
-        return NULL; /*[
-          new Shape.Point(x1, y1),
-          new Shape.Point(x2, y2)
-        ];*/
+        Point pt(x1, y1);
+        ret.push_back(pt);
+        pt.x = x2;
+        pt.y = y2;
+        ret.push_back(pt);
+        return ret;
     }
 };
 
-Line *Shape::Helper::segmentToGeneralForm(double x1, double y1, double x2, double y2)
+Line Shape::Helper::segmentToGeneralForm(double x1, double y1, double x2, double y2)
 {
     double a = y1 - y2;
     double b = x2 - x1;
     double c = x2 * y1 - x1 * y2;
-    return new Line(a, b, c);
+    return Line(a, b, c);
 };
 
 // (x1,y1) is a top left corner, (x2,y2) is a bottom right corner
@@ -307,38 +317,53 @@ bool Shape::Helper::pointInRectangle(Point pt, double x1, double y1, double x2, 
            y - EPS <= pt.y && pt.y <= Y + EPS;
 };
 
-list<Point> *Shape::Helper::lineSegmentCircleIntersection(LineSegment segment, Circle circle)
+list<Point> Shape::Helper::lineSegmentCircleIntersection(LineSegment segment, Circle circle)
 {
+    list<Point> ret; // empty list
+
     double x1 = segment.x1,
            y1 = segment.y1,
            x2 = segment.x2,
            y2 = segment.y2;
-    Line *line = segmentToGeneralForm(x1, y1, x2, y2);
+    Line line = segmentToGeneralForm(x1, y1, x2, y2);
 
-    list<Point> pts;// = circleLineIntersection(circle, *line);
+    vector<Point> pts = circleLineIntersection(circle, line);
 
     // No intersection
-    if (pts->size() == 0)
-        return NULL;
+    if (pts.size() == 0)
+        return ret;
 
     Point pt1 = pts[0];
     bool includePt1 = pointInRectangle(pt1, x1, y1, x2, y2);
 
-    if (pts->size() == 1)
+    if (pts.size() == 1)
     {
         if (includePt1)
-            return NULL;//[pt1];
-        return NULL;
+        {
+            ret.push_back(pt1);
+            return ret;
+        }
+        return ret;
     }
 
     Point pt2 = pts[1];
     bool includePt2 = pointInRectangle(pt2, x1, y1, x2, y2);
 
     if (includePt1 && includePt2)
-        return NULL; //[ pt1, pt2 ];
+    {
+        ret.push_back(pt1);
+        ret.push_back(pt2);
+        return ret;
+    }
     if (includePt1)
-        return NULL; //[pt1];
+    {
+        ret.push_back(pt1);
+        return ret;
+    }
     if (includePt2)
-        return NULL; //[pt2];
-    return NULL;
+    {
+        ret.push_back(pt2);
+        return ret;
+    }
+    return ret;
 };

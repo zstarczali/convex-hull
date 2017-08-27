@@ -117,14 +117,14 @@ function setup() {
   randomLinesBtn.position(60, 330);
   randomLinesBtn.mousePressed(genRandomLines);
 
-  
+
   randomCirclesBtn = createButton('Randomize Circles');
   randomCirclesBtn.position(60, 360);
   randomCirclesBtn.mousePressed(genRandomCircles);
 
-  edgeCaseButton1 = createButton('Display edge cases');
-  edgeCaseButton1.position(60, 390);
-  edgeCaseButton1.mousePressed(testCase1);
+  /*   edgeCaseButton1 = createButton('Display edge cases');
+    edgeCaseButton1.position(60, 390);
+    edgeCaseButton1.mousePressed(testCase1); */
 
   clrButton = createButton('Clear screen');
   clrButton.position(60, 420);
@@ -137,7 +137,7 @@ function clearScreen() {
   lines = [];
 }
 
-function testCase1() {
+/* function testCase1() {
 
   clearScreen();
 
@@ -172,7 +172,7 @@ function testCase1() {
     lines.push(new LineSegment(x1, y1, x2, y2));
   }
 
-}
+} */
 
 function genRandom() {
   clearScreen();

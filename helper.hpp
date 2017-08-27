@@ -9,6 +9,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <list>
+#include <vector>
 #include <memory>
 
 #include "common.hpp"
@@ -37,22 +38,25 @@ private:
 public:
   Helper();
   ~Helper();
+
   static double dist(double x1, double y1, double z1, double x2);
 
   // https://en.wikipedia.org/wiki/Hypot
   static double hypot(double x, double y);
 
   // Rotates a point about a fixed point
-  Point *rotatePoint(Point fp, Point pt, double a);
+  Point rotatePoint(Point fp, Point pt, double a);
+  int ccw(Point a, Point b, Point c);
+
   double acossafe(double x);
 
-  Line *segmentToGeneralForm(double x1, double y1, double x2, double y2);
+  Line segmentToGeneralForm(double x1, double y1, double x2, double y2);
   bool pointInRectangle(Point pt, double x1, double y1, double x2, double y2);
 
   Point *lineLineIntersection(Shape::LineSegment l1, Shape::LineSegment l2);
-  list<Point> *circleCircleIntersectionPoints(Circle c1, Circle c2);
-  list<Point> *circleLineIntersection(Circle circle, Line line);
-  list<Point> *lineSegmentCircleIntersection(LineSegment segment, Circle circle);
+  vector<Point> circleCircleIntersectionPoints(Circle c1, Circle c2);
+  vector<Point> circleLineIntersection(Circle circle, Line line);
+  list<Point> lineSegmentCircleIntersection(LineSegment segment, Circle circle);
 };
 }
 
