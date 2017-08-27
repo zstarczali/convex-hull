@@ -3,6 +3,7 @@
 #include <array>
 #include <vector>
 #include <stdio.h>
+#include <algorithm>
 
 #include "./helper.hpp"
 
@@ -74,15 +75,40 @@ void displayPoint(Point pt)
     cout << pt.x << "," << pt.y << endl;
 }
 
+void addUniqueElement(vector<Point> &results, Point item)
+{
+    /*     if (find(results.begin(), results.end(), item) != results.end())
+        cout << "van" << endl;
+    else
+        cout << "nincs" << endl; */
+}
+
+template <typename T>
+const bool Contains(std::vector<T> &Vec, const T &Element)
+{
+    if (std::find(Vec.begin(), Vec.end(), Element) != Vec.end())
+        return true;
+
+    return false;
+}
+
 int main()
 {
     unique_ptr<Helper> helper;
 
+    vector<Point> results;
     vector<LineSegment> lines;
     vector<Circle> circles;
 
+    // ************************* BEGIN TEST DATA
     lines.push_back(LineSegment(170, 80, 430, 620));
     lines.push_back(LineSegment(170, 180, 430, 400));
+    lines.push_back(LineSegment(170, 180, 430, 830));
+
+    circles.push_back(Circle(400, 400, 300));
+    circles.push_back(Circle(600, 500, 300));
+    circles.push_back(Circle(500, 550, 350));
+    // ************************* END TEST DATA
 
     for (int i1 = 0; i1 < lines.size(); i1++)
     {
@@ -93,7 +119,11 @@ int main()
                 unique_ptr<Point> pts(helper->lineLineIntersection(lines[i1], lines[i2]));
                 if (pts)
                 {
-                    displayPoint(*pts);
+                    if (!Contains(results, *pts))
+                    {
+                        results.push_back(*pts);
+                        displayPoint(*pts);
+                    }
                 }
             }
         }
@@ -108,11 +138,33 @@ int main()
                 vector<Point> pts = helper->circleCircleIntersectionPoints(circles[i1], circles[i2]);
                 for (int k = 0; k < pts.size(); k++)
                 {
+                    if (!Contains(results, pts[k]))
+                    {
+                        results.push_back(pts[k]);
+                        displayPoint(pts[k]);
+                    }
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < circles.size(); i++)
+    {
+        for (int j = 0; j < lines.size(); j++)
+        {
+            vector<Point> pts = helper->lineSegmentCircleIntersection(lines[j], circles[i]);
+            for (int k = 0; k < pts.size(); k++)
+            {
+                if (!Contains(results, pts[k]))
+                {
+                    results.push_back(pts[k]);
                     displayPoint(pts[k]);
                 }
             }
         }
     }
+
+    results.shrink_to_fit();
 
     getchar();
     return 0;

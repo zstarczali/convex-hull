@@ -44,6 +44,12 @@ Point Point::operator=(const Point &other)
         this->y = other.y;
     }
 }
+bool Point::operator==(const Point &other) const
+{
+    if (this->x == other.x && this->y == other.y)
+        return true;
+    return false;
+}
 
 // comparison is done first on y coordinate and then on x coordinate
 bool Point::operator<(Point b)

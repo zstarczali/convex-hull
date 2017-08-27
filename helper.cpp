@@ -317,9 +317,9 @@ bool Shape::Helper::pointInRectangle(Point pt, double x1, double y1, double x2, 
            y - EPS <= pt.y && pt.y <= Y + EPS;
 };
 
-list<Point> Shape::Helper::lineSegmentCircleIntersection(LineSegment segment, Circle circle)
+vector<Point> Shape::Helper::lineSegmentCircleIntersection(LineSegment segment, Circle circle)
 {
-    list<Point> ret; // empty list
+    vector<Point> ret; // empty list
 
     double x1 = segment.x1,
            y1 = segment.y1,

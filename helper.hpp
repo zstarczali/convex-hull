@@ -11,6 +11,7 @@
 #include <list>
 #include <vector>
 #include <memory>
+#include <algorithm>
 
 #include "common.hpp"
 
@@ -56,7 +57,7 @@ public:
   Point *lineLineIntersection(Shape::LineSegment l1, Shape::LineSegment l2);
   vector<Point> circleCircleIntersectionPoints(Circle c1, Circle c2);
   vector<Point> circleLineIntersection(Circle circle, Line line);
-  list<Point> lineSegmentCircleIntersection(LineSegment segment, Circle circle);
+  vector<Point> lineSegmentCircleIntersection(LineSegment segment, Circle circle);
 };
 }
 
