@@ -40,31 +40,31 @@ typedef double coord2_t; // must be big enough to hold 2*max(|coordinate|)^2
 class Helper
 {
 
-private:
 public:
   Helper();
   ~Helper();
 
+private:
+  // Rotates a point about a fixed point
+  Point rotatePoint(Point fp, Point pt, double a);
+  double acossafe(double x);
+  Line segmentToGeneralForm(double x1, double y1, double x2, double y2);
+  bool pointInRectangle(Point pt, double x1, double y1, double x2, double y2);
+  coord2_t cross(const Point &O, const Point &A, const Point &B);
+
+public:
   static double dist(double x1, double y1, double z1, double x2);
 
   // https://en.wikipedia.org/wiki/Hypot
   static double hypot(double x, double y);
 
-  // Rotates a point about a fixed point
-  Point rotatePoint(Point fp, Point pt, double a);
-  double acossafe(double x);
+  Point *calculateLineLineIntersection(Shape::LineSegment l1, Shape::LineSegment l2);
+  vector<Point> calculateCircleCircleIntersectionPoints(Circle c1, Circle c2);
+  vector<Point> calculateCircleLineIntersection(Circle circle, Line line);
+  vector<Point> calculateLineSegmentCircleIntersection(LineSegment segment, Circle circle);
 
-  Line segmentToGeneralForm(double x1, double y1, double x2, double y2);
-  bool pointInRectangle(Point pt, double x1, double y1, double x2, double y2);
-
-  Point *lineLineIntersection(Shape::LineSegment l1, Shape::LineSegment l2);
-  vector<Point> circleCircleIntersectionPoints(Circle c1, Circle c2);
-  vector<Point> circleLineIntersection(Circle circle, Line line);
-  vector<Point> lineSegmentCircleIntersection(LineSegment segment, Circle circle);
-
-  coord2_t cross(const Point &O, const Point &A, const Point &B);
-  vector<Point> convex_hull(vector<Point> P);
-  double polygonArea(vector<Point> points);
+  vector<Point> calculateConvexHull(vector<Point> P);
+  double calculatePolygonArea(vector<Point> points);
 };
 }
 

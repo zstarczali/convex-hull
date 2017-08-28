@@ -1,6 +1,7 @@
 #include "point.hpp"
 
-#include <algorithm> // std::sort
+#include <cmath>
+#include <limits>
 
 using Shape::Point;
 
@@ -46,9 +47,15 @@ Point Point::operator=(const Point &other)
         this->y = other.y;
     }
 }
+
+bool Point::isApproximatelyEqual(double x, double y) const
+{
+    return fabs(x - y) <= numeric_limits<float>::epsilon();
+}
+
 bool Point::operator==(const Point &other) const
 {
-    if (this->x == other.x && this->y == other.y)
+    if (this->isApproximatelyEqual(this->x, other.x) && this->isApproximatelyEqual(this->y, other.y))
         return true;
     return false;
 }

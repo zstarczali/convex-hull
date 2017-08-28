@@ -74,7 +74,7 @@ double Helper::acossafe(double x)
     return acos(x);
 }
 
-Point *Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
+Point *Helper::calculateLineLineIntersection(LineSegment l1, LineSegment l2)
 {
     unique_ptr<Point> p0(new Point(l1.x1, l1.y1));
     unique_ptr<Point> p1(new Point(l1.x2, l1.y2));
@@ -128,7 +128,7 @@ Point *Helper::lineLineIntersection(LineSegment l1, LineSegment l2)
     return new Point(p0->x + (t * s10_x), p0->y + (t * s10_y));
 }
 
-vector<Point> Helper::circleCircleIntersectionPoints(Circle c1, Circle c2)
+vector<Point> Helper::calculateCircleCircleIntersectionPoints(Circle c1, Circle c2)
 {
     vector<Point> ret;
 
@@ -192,7 +192,7 @@ vector<Point> Helper::circleCircleIntersectionPoints(Circle c1, Circle c2)
     return ret;
 };
 
-vector<Point> Helper::circleLineIntersection(Circle circle, Line line)
+vector<Point> Helper::calculateCircleLineIntersection(Circle circle, Line line)
 {
     vector<Point> ret; // empty list
 
@@ -307,7 +307,7 @@ bool Helper::pointInRectangle(Point pt, double x1, double y1, double x2, double 
            y - EPS <= pt.y && pt.y <= Y + EPS;
 };
 
-vector<Point> Helper::lineSegmentCircleIntersection(LineSegment segment, Circle circle)
+vector<Point> Helper::calculateLineSegmentCircleIntersection(LineSegment segment, Circle circle)
 {
     vector<Point> ret; // empty list
 
@@ -317,7 +317,7 @@ vector<Point> Helper::lineSegmentCircleIntersection(LineSegment segment, Circle 
            y2 = segment.y2;
     Line line = segmentToGeneralForm(x1, y1, x2, y2);
 
-    vector<Point> pts = circleLineIntersection(circle, line);
+    vector<Point> pts = calculateCircleLineIntersection(circle, line);
 
     // No intersection
     if (pts.size() == 0)
@@ -368,7 +368,7 @@ Shape::coord2_t Helper::cross(const Point &O, const Point &A, const Point &B)
 
 // Returns a list of points on the convex hull in counter-clockwise order.
 // Note: the last point in the returned list is the same as the first one.
-vector<Point> Helper::convex_hull(vector<Point> P)
+vector<Point> Helper::calculateConvexHull(vector<Point> P)
 {
     int n = P.size(), k = 0;
     if (n == 1)
@@ -398,7 +398,7 @@ vector<Point> Helper::convex_hull(vector<Point> P)
     return H;
 }
 
-double Helper::polygonArea(vector<Point> points)
+double Helper::calculatePolygonArea(vector<Point> points)
 {
     double area = 0.0;            // Accumulates area in the loop
     double j = points.size() - 1; // The last vertex is the 'previous' one to the first

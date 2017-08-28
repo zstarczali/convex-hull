@@ -9,15 +9,15 @@ namespace Shape
 {
 class LineSegment
 {
-  public:
-    double x1;
-    double y1;
-    double x2;
-    double y2;
-    Point p1;
-    Point p2;
+public:
+  double x1;
+  double y1;
+  double x2;
+  double y2;
+  Point p1;
+  Point p2;
 
-    LineSegment(double x1, double y1, double x2, double y2);
+  LineSegment(double x1, double y1, double x2, double y2);
 };
 }
 

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <list>
 #include <array>
 #include <vector>
@@ -8,11 +7,14 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <limits>
 
-#include "./helper.hpp"
+#include "helper.hpp"
 
 using namespace std;
 using namespace Shape;
+
+typedef std::numeric_limits<double> dbl;
 
 void displayPoint(Point pt)
 {
@@ -20,16 +22,12 @@ void displayPoint(Point pt)
 }
 
 template <typename T>
-const bool Contains(std::vector<T> &Vec, const T &Element)
+const bool Contains(vector<T> &Vec, const T &Element)
 {
-    if (std::find(Vec.begin(), Vec.end(), Element) != Vec.end())
+    if (find(Vec.begin(), Vec.end(), Element) != Vec.end())
         return true;
 
     return false;
-}
-
-void calculate()
-{
 }
 
 int main(int argc, char *argv[])
@@ -136,84 +134,64 @@ int main(int argc, char *argv[])
     vector<Point> results;
 
     // ************************* BEGIN TEST DATA
-/*     lines.push_back(LineSegment(170, 80, 430, 620));
+    /*     
+    lines.push_back(LineSegment(170, 80, 430, 620));
     lines.push_back(LineSegment(170, 180, 430, 400));
     lines.push_back(LineSegment(170, 180, 430, 830));
 
     circles.push_back(Circle(400, 400, 300));
     circles.push_back(Circle(600, 500, 300));
-    circles.push_back(Circle(500, 550, 350)); */
+    circles.push_back(Circle(500, 550, 350)); 
+    */
     // ************************* END TEST DATA
 
     for (int i1 = 0; i1 < lines.size(); i1++)
-    {
         for (int i2 = 0; i2 < lines.size(); i2++)
-        {
             if (i1 != i2)
             {
-                unique_ptr<Point> pts(helper->lineLineIntersection(lines[i1], lines[i2]));
+                unique_ptr<Point> pts(helper->calculateLineLineIntersection(lines[i1], lines[i2]));
                 if (pts)
                 {
                     if (!Contains(results, *pts))
-                    {
                         results.push_back(*pts);
-                    }
                 }
             }
-        }
-    }
 
     for (int i1 = 0; i1 < circles.size(); i1++)
-    {
         for (int i2 = 0; i2 < circles.size(); i2++)
-        {
             if (i1 != i2)
             {
-                vector<Point> pts = helper->circleCircleIntersectionPoints(circles[i1], circles[i2]);
+                vector<Point> pts = helper->calculateCircleCircleIntersectionPoints(circles[i1], circles[i2]);
                 for (int k = 0; k < pts.size(); k++)
                 {
                     if (!Contains(results, pts[k]))
-                    {
                         results.push_back(pts[k]);
-                    }
                 }
             }
-        }
-    }
 
     for (int i = 0; i < circles.size(); i++)
-    {
         for (int j = 0; j < lines.size(); j++)
         {
-            vector<Point> pts = helper->lineSegmentCircleIntersection(lines[j], circles[i]);
+            vector<Point> pts = helper->calculateLineSegmentCircleIntersection(lines[j], circles[i]);
             for (int k = 0; k < pts.size(); k++)
-            {
                 if (!Contains(results, pts[k]))
-                {
                     results.push_back(pts[k]);
-                }
-            }
         }
-    }
+
+    cout.precision(dbl::max_digits10);
 
     cout << results.size() << endl;
     for (int k = 0; k < results.size(); k++)
-    {
-    displayPoint(results[k]);
-    }
-    
+        displayPoint(results[k]);
 
     results.shrink_to_fit();
-    vector<Point> convexhull = helper->convex_hull(results);
+    vector<Point> convexhull = helper->calculateConvexHull(results);
     cout << convexhull.size() << endl;
-    
-    for (int k = 0; k < convexhull.size(); k++)
-    {
-        displayPoint(convexhull[k]);
-    }
-    // display area
-    cout << helper->polygonArea(convexhull) << endl;
 
-    getchar();
+    for (int k = 0; k < convexhull.size(); k++)
+        displayPoint(convexhull[k]);
+
+    // display area
+    cout << helper->calculatePolygonArea(convexhull) << endl;
     return 0;
 }
