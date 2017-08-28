@@ -54,7 +54,7 @@ bool Point::operator==(const Point &other) const
 }
 
 // comparison is done first on y coordinate and then on x coordinate
-bool Point::operator<(Point b)
+bool Point::operator<(const Point &b) const
 {
     if (y != b.y)
         return y < b.y;

@@ -31,7 +31,7 @@ public:
   Point operator=(const Point &other);
   bool operator==(const Point &other) const;
 
-  bool operator<(Point b);
+  bool operator<(const Point &b) const;
 };
 }
 

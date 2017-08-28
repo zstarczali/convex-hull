@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
             // the first line is a counter
             if (linecount == 0)
             {
-                objectcount = std::stoi(line, nullptr, 0);
+                objectcount = stoi(line, nullptr, 0);
                 linecount++;
             }
             else
@@ -133,9 +133,7 @@ int main(int argc, char *argv[])
     }
 
     unique_ptr<Helper> helper;
-
     vector<Point> results;
-
 
     // ************************* BEGIN TEST DATA
 /*     lines.push_back(LineSegment(170, 80, 430, 620));

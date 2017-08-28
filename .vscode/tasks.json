@@ -17,9 +17,9 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "dependsOn": [
+ /*            "dependsOn": [
                 "build clean"
-            ]
+            ] */
         },
         {
             "taskName": "build clean",
