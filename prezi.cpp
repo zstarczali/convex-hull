@@ -157,7 +157,6 @@ int main(int argc, char *argv[])
                     if (!Contains(results, *pts))
                     {
                         results.push_back(*pts);
-                        displayPoint(*pts);
                     }
                 }
             }
@@ -176,7 +175,6 @@ int main(int argc, char *argv[])
                     if (!Contains(results, pts[k]))
                     {
                         results.push_back(pts[k]);
-                        displayPoint(pts[k]);
                     }
                 }
             }
@@ -193,20 +191,28 @@ int main(int argc, char *argv[])
                 if (!Contains(results, pts[k]))
                 {
                     results.push_back(pts[k]);
-                    displayPoint(pts[k]);
                 }
             }
         }
     }
 
+    cout << results.size() << endl;
+    for (int k = 0; k < results.size(); k++)
+    {
+    displayPoint(results[k]);
+    }
+    
+
     results.shrink_to_fit();
-    cout << "convex hull" << endl;
     vector<Point> convexhull = helper->convex_hull(results);
+    cout << convexhull.size() << endl;
+    
     for (int k = 0; k < convexhull.size(); k++)
     {
         displayPoint(convexhull[k]);
     }
-    cout << "area=" << helper->polygonArea(convexhull) << endl;
+    // display area
+    cout << helper->polygonArea(convexhull) << endl;
 
     getchar();
     return 0;
